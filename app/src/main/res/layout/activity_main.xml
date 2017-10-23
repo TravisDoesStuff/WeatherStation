@@ -4,6 +4,216 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tnburt.weatherstation.MainActivity">
+    android:background="@drawable/sky"
+    tools:context="tnburt.weatherstation.MainActivity"
+    >
+
+    <ImageView
+        android:id="@+id/image_cloudCircle"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:srcCompat="@drawable/cloudcircle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="3"
+        android:text="--"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:maxLength="3"
+        app:layout_constraintRight_toLeftOf="@+id/image_cloudCircle"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle" />
+
+    <TextView
+        android:id="@+id/text_humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="3"
+        android:text="--"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:maxLength="3"
+        app:layout_constraintRight_toLeftOf="@+id/image_cloudCircle"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp" />
+
+    <TextView
+        android:id="@+id/text_pressure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="3"
+        android:text="----"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:maxLength="5"
+        app:layout_constraintLeft_toRightOf="@+id/image_cloudCircle"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp" />
+
+    <TextView
+        android:id="@+id/text_city"
+        android:layout_width="318dp"
+        android:layout_height="47dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="20dp"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="3"
+        android:fontFamily="sans-serif"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_coord"
+        android:layout_width="318dp"
+        android:layout_height="17dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="3"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@+id/text_city"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        android:id="@+id/image_cloudVertical"
+        android:layout_width="10dp"
+        android:layout_height="150dp"
+        app:srcCompat="@drawable/cloudline"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
+        android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/image_cloudCircle"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/image_cloudCircle" />
+
+    <ImageView
+        android:id="@+id/image_cloudHorizontal"
+        android:layout_width="150dp"
+        android:layout_height="10dp"
+        app:srcCompat="@drawable/cloudline"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/image_cloudCircle"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/image_cloudCircle"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
+        android:layout_marginBottom="8dp" />
+
+    <ImageView
+        android:id="@+id/image_cloudWedge1"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        app:srcCompat="@drawable/cloudwedge"
+        android:layout_margin="5dp"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
+        app:layout_constraintRight_toRightOf="@+id/image_cloudCircle"
+        tools:layout_editor_absoluteX="190dp" />
+
+    <ImageView
+        android:id="@+id/image_cloudWedge2"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:rotation="90"
+        app:srcCompat="@drawable/cloudwedge"
+        android:layout_margin="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
+        app:layout_constraintRight_toRightOf="@+id/image_cloudCircle"
+        tools:layout_editor_absoluteX="190dp" />
+
+    <ImageView
+        android:id="@+id/image_cloudWedge3"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:rotation="180"
+        app:srcCompat="@drawable/cloudwedge"
+        android:layout_margin="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
+        app:layout_constraintLeft_toLeftOf="@+id/image_cloudCircle"
+        tools:layout_editor_absoluteX="190dp" />
+
+    <ImageView
+        android:id="@+id/image_cloudWedge4"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:rotation="270"
+        app:srcCompat="@drawable/cloudwedge"
+        android:layout_margin="5dp"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
+        app:layout_constraintLeft_toLeftOf="@+id/image_cloudCircle"
+        tools:layout_editor_absoluteX="190dp" />
+
+    <ImageView
+        android:id="@+id/image_cloudHalf_right"
+        android:layout_width="65dp"
+        android:layout_height="140dp"
+        app:srcCompat="@drawable/cloudhalf"
+        android:layout_margin="5dp"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
+        app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
+        app:layout_constraintRight_toRightOf="@+id/image_cloudCircle"
+        tools:layout_editor_absoluteX="190dp" />
+
+    <ImageView
+        android:id="@+id/image_cloudHalf_left"
+        android:layout_width="65dp"
+        android:layout_height="140dp"
+        android:rotation="180"
+        app:srcCompat="@drawable/cloudhalf"
+        android:layout_margin="5dp"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
+        app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
+        app:layout_constraintLeft_toLeftOf="@+id/image_cloudCircle"
+        tools:layout_editor_absoluteX="190dp" />
 
 </android.support.constraint.ConstraintLayout>
