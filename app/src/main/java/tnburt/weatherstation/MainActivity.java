@@ -17,7 +17,7 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final String API_KEY = ""; //Insert API key here
+    static final String API_KEY = "adc9219f33c6657d2f738c509e5e6954"; //Insert API key here
     static final double hPa_TO_mmHg = 0.029529983071445;
 
     private TextView cityView;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     int windDirection;
     int cloudCover;
 
-    String city = "";
+    String city = "Columbia";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... urls) {
             String units = "imperial";
-            String lat = "";
-            String lon = "";
+            String lat = "38.9461684";
+            String lon = "-92.3105648";
 
             try{
                 URL url = new URL("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&units="+units+"&appid="+API_KEY);
@@ -161,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
                     cloudWedge4View.setAlpha((float)1);
                 }
 
+                if(windSpeed>0){
+                    windFlagView.setAlpha((float)1);
+                }
                 windFlagView.setRotation((float)windDirection-180);
 
                 cityView.setText(city);
