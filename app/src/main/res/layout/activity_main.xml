@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/image_cloudCircle"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="0dp"
         android:shadowColor="@android:color/black"
         android:shadowDx="0"
         android:shadowDy="1"
@@ -61,7 +61,7 @@
         app:layout_constraintRight_toLeftOf="@+id/image_cloudCircle"
         android:layout_marginRight="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="0dp"
         android:layout_marginEnd="8dp" />
 
     <TextView
@@ -81,7 +81,7 @@
         app:layout_constraintLeft_toRightOf="@+id/image_cloudCircle"
         android:layout_marginLeft="8dp"
         app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="0dp"
         android:layout_marginStart="8dp" />
 
     <TextView
@@ -124,46 +124,50 @@
     <ImageView
         android:id="@+id/image_cloudVertical"
         android:layout_width="10dp"
-        android:layout_height="150dp"
+        android:layout_height="120dp"
+        android:alpha="0"
         app:srcCompat="@drawable/cloudline"
         app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
         android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
         android:layout_marginBottom="0dp"
         app:layout_constraintVertical_bias="1.0"
-        android:layout_marginRight="8dp"
+        android:layout_marginRight="5dp"
         app:layout_constraintRight_toRightOf="@+id/image_cloudCircle"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="5dp"
         app:layout_constraintLeft_toLeftOf="@+id/image_cloudCircle" />
 
     <ImageView
         android:id="@+id/image_cloudHorizontal"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="10dp"
+        android:alpha="0"
         app:srcCompat="@drawable/cloudline"
-        android:layout_marginRight="8dp"
+        android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="@+id/image_cloudCircle"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/image_cloudCircle"
         app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="5dp" />
 
     <ImageView
         android:id="@+id/image_cloudWedge1"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        app:srcCompat="@drawable/cloudwedge"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:alpha="0"
         android:layout_margin="5dp"
-        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
         app:layout_constraintRight_toRightOf="@+id/image_cloudCircle"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
+        app:srcCompat="@drawable/cloudwedge"
         tools:layout_editor_absoluteX="190dp" />
 
     <ImageView
         android:id="@+id/image_cloudWedge2"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:alpha="0"
         android:rotation="90"
         app:srcCompat="@drawable/cloudwedge"
         android:layout_margin="5dp"
@@ -173,8 +177,9 @@
 
     <ImageView
         android:id="@+id/image_cloudWedge3"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:alpha="0"
         android:rotation="180"
         app:srcCompat="@drawable/cloudwedge"
         android:layout_margin="5dp"
@@ -184,8 +189,9 @@
 
     <ImageView
         android:id="@+id/image_cloudWedge4"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:alpha="0"
         android:rotation="270"
         app:srcCompat="@drawable/cloudwedge"
         android:layout_margin="5dp"
@@ -195,8 +201,9 @@
 
     <ImageView
         android:id="@+id/image_cloudHalf_right"
-        android:layout_width="65dp"
-        android:layout_height="140dp"
+        android:layout_width="50dp"
+        android:layout_height="110dp"
+        android:alpha="0"
         app:srcCompat="@drawable/cloudhalf"
         android:layout_margin="5dp"
         app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
@@ -206,8 +213,9 @@
 
     <ImageView
         android:id="@+id/image_cloudHalf_left"
-        android:layout_width="65dp"
-        android:layout_height="140dp"
+        android:layout_width="50dp"
+        android:layout_height="110dp"
+        android:alpha="0"
         android:rotation="180"
         app:srcCompat="@drawable/cloudhalf"
         android:layout_margin="5dp"
@@ -215,5 +223,19 @@
         app:layout_constraintBottom_toBottomOf="@+id/image_cloudCircle"
         app:layout_constraintLeft_toLeftOf="@+id/image_cloudCircle"
         tools:layout_editor_absoluteX="190dp" />
+
+    <ImageView
+        android:id="@+id/image_windFlag"
+        android:layout_width="10dp"
+        android:layout_height="170dp"
+        android:transformPivotX="5dp"
+        android:transformPivotY="0dp"
+        android:rotation="0"
+        android:alpha="0.8"
+        app:srcCompat="@drawable/windflag"
+        app:layout_constraintLeft_toLeftOf="@+id/image_cloudCircle"
+        app:layout_constraintRight_toRightOf="@+id/image_cloudCircle"
+        app:layout_constraintTop_toTopOf="@+id/image_cloudCircle"
+        android:layout_marginTop="55dp" />
 
 </android.support.constraint.ConstraintLayout>

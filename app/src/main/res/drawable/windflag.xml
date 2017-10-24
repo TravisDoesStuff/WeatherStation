@@ -4,10 +4,7 @@
         <shape
             android:id="@+id/windFlag"
             android:shape="rectangle">
-            <stroke
-                android:width="10dp"
-                android:color="@android:color/white"
-                android:alpha="0.5"/>
+            <solid android:color="@android:color/white"/>
             <corners
                 android:radius="5dp"/>
         </shape>

@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView cloudWedge4View;
     private ImageView cloudHalfLeftView;
     private ImageView cloudHalfRightView;
+    private ImageView windFlagView;
 
     String coordinates;
     int temperature;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         cloudWedge4View             = (ImageView) findViewById(R.id.image_cloudWedge4);
         cloudHalfLeftView           = (ImageView) findViewById(R.id.image_cloudHalf_left);
         cloudHalfRightView          = (ImageView) findViewById(R.id.image_cloudHalf_right);
+        windFlagView                = (ImageView) findViewById(R.id.image_windFlag);
 
         new FetchWeather().execute();
     }
@@ -131,15 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
                 cloudCover = clouds.getInt("all");
 
-                cloudLineVerticalView.setAlpha((float)0);
-                cloudLineHorizontalView.setAlpha((float)0);
-                cloudWedge1View.setAlpha((float)0);
-                cloudWedge2View.setAlpha((float)0);
-                cloudWedge3View.setAlpha((float)0);
-                cloudWedge4View.setAlpha((float)0);
-                cloudHalfLeftView.setAlpha((float)0);
-                cloudHalfRightView.setAlpha((float)0);
-
                 if(cloudCover >= 5 && cloudCover < 15){
                     cloudLineVerticalView.setAlpha((float)1);
                 } else if(cloudCover >= 15 && cloudCover < 35){
@@ -161,12 +154,14 @@ public class MainActivity extends AppCompatActivity {
                 } else if(cloudCover >= 80 && cloudCover < 95){
                     cloudHalfLeftView.setAlpha((float)1);
                     cloudHalfRightView.setAlpha((float)1);
-                } else if(cloudCover >= 95){
+                } else if(cloudCover >= 95 || cloudCover == 1){
                     cloudWedge1View.setAlpha((float)1);
                     cloudWedge2View.setAlpha((float)1);
                     cloudWedge3View.setAlpha((float)1);
                     cloudWedge4View.setAlpha((float)1);
                 }
+
+                windFlagView.setRotation((float)windDirection-180);
 
                 cityView.setText(city);
                 coordView.setText(coordinates);
