@@ -1,12 +1,20 @@
 package tnburt.weatherstation;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,14 +25,22 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final String API_KEY = "adc9219f33c6657d2f738c509e5e6954"; //Insert API key here
+    static final String API_KEY = ""; //Insert API key here
     static final double hPa_TO_mmHg = 0.029529983071445;
+    static final double ms_TO_knots = 1.943844;
+
+    int shortFlagPx;
+    int longFlagPx;
+
+    double latitude;
+    double longitude;
 
     private TextView cityView;
     private TextView coordView;
     private TextView temperatureView;
     private TextView humidityView;
     private TextView pressureView;
+    private TextView precipitationView;
 
     private ImageView cloudLineVerticalView;
     private ImageView cloudLineHorizontalView;
@@ -35,16 +51,11 @@ public class MainActivity extends AppCompatActivity {
     private ImageView cloudHalfLeftView;
     private ImageView cloudHalfRightView;
     private ImageView windFlagView;
-
-    String coordinates;
-    int temperature;
-    int humidity;
-    double barometer;
-    double windSpeed;
-    int windDirection;
-    int cloudCover;
-
-    String city = "Columbia";
+    private ImageView windFlag1View;
+    private ImageView windFlag2View;
+    private ImageView windFlag3View;
+    private ImageView windFlag4View;
+    private ImageView windFlag5View;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -52,11 +63,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+
+            Log.d("Latitude: ", String.format("%.2f", latitude));
+            Log.d("Longitude: ", String.format("%.2f", longitude));
+        }
+
         cityView            = (TextView) findViewById(R.id.text_city);
         coordView           = (TextView) findViewById(R.id.text_coord);
+
         temperatureView     = (TextView) findViewById(R.id.text_temperature);
         humidityView        = (TextView) findViewById(R.id.text_humidity);
         pressureView        = (TextView) findViewById(R.id.text_pressure);
+
+        precipitationView           = (TextView) findViewById(R.id.text_precipitation);
 
         cloudLineVerticalView       = (ImageView) findViewById(R.id.image_cloudVertical);
         cloudLineHorizontalView     = (ImageView) findViewById(R.id.image_cloudHorizontal);
@@ -66,7 +92,19 @@ public class MainActivity extends AppCompatActivity {
         cloudWedge4View             = (ImageView) findViewById(R.id.image_cloudWedge4);
         cloudHalfLeftView           = (ImageView) findViewById(R.id.image_cloudHalf_left);
         cloudHalfRightView          = (ImageView) findViewById(R.id.image_cloudHalf_right);
+
         windFlagView                = (ImageView) findViewById(R.id.image_windFlag);
+        windFlag1View               = (ImageView) findViewById(R.id.image_windFlag1);
+        windFlag2View               = (ImageView) findViewById(R.id.image_windFlag2);
+        windFlag3View               = (ImageView) findViewById(R.id.image_windFlag3);
+        windFlag4View               = (ImageView) findViewById(R.id.image_windFlag4);
+        windFlag5View               = (ImageView) findViewById(R.id.image_windFlag5);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        float logicalDensity = displayMetrics.density;
+        shortFlagPx = (int)Math.ceil(40 * logicalDensity);
+        longFlagPx = (int)Math.ceil(80 * logicalDensity);
 
         new FetchWeather().execute();
     }
@@ -83,11 +121,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... urls) {
             String units = "imperial";
-            String lat = "38.9461684";
-            String lon = "-92.3105648";
 
             try{
-                URL url = new URL("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&units="+units+"&appid="+API_KEY);
+                URL url = new URL("http://api.openweathermap.org/data/2.5/weather?lat="+latitude+"&lon="+longitude+"&units="+units+"&appid="+API_KEY);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try{
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -117,21 +153,125 @@ public class MainActivity extends AppCompatActivity {
             Log.i("JSON", response);
 
             try{
-                JSONObject coord = new JSONObject(response).getJSONObject("coord");
-                JSONObject main = new JSONObject(response).getJSONObject("main");
-                JSONObject wind = new JSONObject(response).getJSONObject("wind");
-                JSONObject clouds = new JSONObject(response).getJSONObject("clouds");
+                JSONObject jsonResponse = new JSONObject(response);
 
-                coordinates = "Lat: " + coord.getString("lat") + ", Long: " + coord.getString("lon");
+                updateCity(jsonResponse);
+                updateCoordinates(jsonResponse);
+                updateWeather(jsonResponse);
+                updateMain(jsonResponse);
+                updateClouds(jsonResponse);
+                updateWind(jsonResponse);
 
-                temperature = main.getInt("temp");
-                humidity = main.getInt("humidity");
-                barometer = main.getDouble("pressure") * hPa_TO_mmHg;
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
 
-                windSpeed = wind.getDouble("speed");
-                windDirection = wind.getInt("deg");
+        private void updateCity(JSONObject jsonResponse){
+            try{
+                String city = jsonResponse.getString("name");
+                cityView.setText(city);
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
 
-                cloudCover = clouds.getInt("all");
+        private void updateCoordinates(JSONObject jsonResponse){
+            try{
+                JSONObject coord = jsonResponse.getJSONObject("coord");
+
+                String coordinates = "Lat: " + coord.getString("lat") + ", Long: " + coord.getString("lon");
+
+                coordView.setText(coordinates);
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        private void updateWeather(JSONObject jsonResponse){
+            try{
+                JSONArray weather = jsonResponse.getJSONArray("weather");
+
+                for(int i=0; i<=weather.length(); i++){
+                    JSONObject condition = weather.getJSONObject(i);
+
+                    int conditionId = condition.getInt("id");
+
+                    if(conditionId>=200 && conditionId<300){
+                        //thunderstorm
+                        precipitationView.setText("\u2608");
+                    }
+                    else if(conditionId>=300 && conditionId<400){
+                        // drizzle
+                        precipitationView.setText("\u002C");
+                    }
+                    else if(conditionId>=500 && conditionId<600){
+                        // rain
+                        precipitationView.setText("\u2022");
+                        if(conditionId>=520){
+                            precipitationView.setText("\u25BD"); //shower
+                        }
+                    }
+                    else if(conditionId>=600 && conditionId<700){
+                        // snow
+                        precipitationView.setText("\u2731");
+
+                        if(conditionId == 611){
+                            precipitationView.setText("\u25EC"); //sleet
+                        }
+                    }
+                    else if(conditionId>=700 && conditionId<800){
+                        // atmosphere
+                        if(conditionId == 701 || conditionId == 741){
+                            precipitationView.setText("\u2262"); //fog
+                        }
+                        if(conditionId == 711){
+                            //smoke
+                        }
+                        if(conditionId == 721){
+                            precipitationView.setText("\u221E"); //haze
+                        }
+                    }
+                    else if(conditionId>=800 && conditionId<900){
+                        //clouds
+                    }
+                    else if(conditionId>=900){
+                        //extreme
+                        if(conditionId == 906){
+                            precipitationView.setText("\u25B3"); //hail
+                        }
+                    }
+                }
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        private void updateMain(JSONObject jsonResponse){
+            try{
+                JSONObject main = jsonResponse.getJSONObject("main");
+
+                int temperature = main.getInt("temp");
+                int humidity = main.getInt("humidity");
+                double barometer = main.getDouble("pressure") * hPa_TO_mmHg;
+
+                temperatureView.setText(String.valueOf(temperature));
+                humidityView.setText(String.valueOf(humidity));
+                pressureView.setText(String.valueOf(barometer));
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        private void updateClouds(JSONObject jsonResponse){
+            try{
+                JSONObject clouds = jsonResponse.getJSONObject("clouds");
+                int cloudCover = clouds.getInt("all");
 
                 if(cloudCover >= 5 && cloudCover < 15){
                     cloudLineVerticalView.setAlpha((float)1);
@@ -151,31 +291,74 @@ public class MainActivity extends AppCompatActivity {
                     cloudWedge1View.setAlpha((float)1);
                     cloudWedge2View.setAlpha((float)1);
                     cloudWedge3View.setAlpha((float)1);
+                    cloudLineVerticalView.setAlpha((float)1);
+                    cloudLineHorizontalView.setAlpha((float)1);
                 } else if(cloudCover >= 80 && cloudCover < 95){
                     cloudHalfLeftView.setAlpha((float)1);
                     cloudHalfRightView.setAlpha((float)1);
-                } else if(cloudCover >= 95 || cloudCover == 1){
+                } else if(cloudCover >= 95){
+                    cloudLineVerticalView.setAlpha((float)1);
+                    cloudLineHorizontalView.setAlpha((float)1);
                     cloudWedge1View.setAlpha((float)1);
                     cloudWedge2View.setAlpha((float)1);
                     cloudWedge3View.setAlpha((float)1);
                     cloudWedge4View.setAlpha((float)1);
                 }
-
-                if(windSpeed>0){
-                    windFlagView.setAlpha((float)1);
-                }
-                windFlagView.setRotation((float)windDirection-180);
-
-                cityView.setText(city);
-                coordView.setText(coordinates);
-                temperatureView.setText(String.valueOf(temperature));
-                humidityView.setText(String.valueOf(humidity));
-                pressureView.setText(String.valueOf(barometer));
             }
             catch(JSONException e){
                 e.printStackTrace();
             }
+        }
 
+        private void updateWind(JSONObject jsonResponse){
+            try{
+                JSONObject wind = jsonResponse.getJSONObject("wind");
+
+                double windSpeed = wind.getDouble("speed") * ms_TO_knots;
+                int windDirection = wind.getInt("deg");
+
+                if(windSpeed>0){
+                    windFlagView.setAlpha((float)1);
+                }
+                if(windSpeed>=3){
+                    windFlag2View.setAlpha((float)1);
+                }
+                if(windSpeed>=7){
+                    windFlag1View.setAlpha((float)1);
+                    windFlag2View.setAlpha((float)0);
+                }
+                if(windSpeed>=13){
+                    windFlag2View.setAlpha((float)1);
+                }
+                if(windSpeed>=17){
+                    windFlag2View.getLayoutParams().width = longFlagPx;
+                }
+                if(windSpeed>=23){
+                    windFlag3View.setAlpha((float)1);
+                }
+                if(windSpeed>=27){
+                    windFlag3View.getLayoutParams().width = longFlagPx;
+                }
+                if(windSpeed>=33){
+                    windFlag4View.setAlpha((float)1);
+                }
+                if(windSpeed>=37){
+                    windFlag4View.getLayoutParams().width = longFlagPx;
+                }
+                if(windSpeed>=43){
+                    windFlag5View.setAlpha((float)1);
+                }
+
+                windFlagView.setRotation((float)windDirection);
+                windFlag1View.setRotation((float)windDirection);
+                windFlag2View.setRotation((float)windDirection);
+                windFlag3View.setRotation((float)windDirection);
+                windFlag4View.setRotation((float)windDirection);
+                windFlag5View.setRotation((float)windDirection);
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
         }
     }
 }
