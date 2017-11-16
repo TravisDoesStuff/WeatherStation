@@ -1,18 +1,14 @@
 package tnburt.weatherstation;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,47 +54,39 @@ public class MainActivity extends AppCompatActivity {
     private ImageView windFlag5View;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        cityView            = findViewById(R.id.text_city);
+        coordView           = findViewById(R.id.text_coord);
 
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        temperatureView     = findViewById(R.id.text_temperature);
+        humidityView        = findViewById(R.id.text_humidity);
+        pressureView        = findViewById(R.id.text_pressure);
 
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
+        precipitationView           = findViewById(R.id.text_precipitation);
 
-            Log.d("Latitude: ", String.format("%.2f", latitude));
-            Log.d("Longitude: ", String.format("%.2f", longitude));
-        }
+        cloudLineVerticalView       = findViewById(R.id.image_cloudVertical);
+        cloudLineHorizontalView     = findViewById(R.id.image_cloudHorizontal);
+        cloudWedge1View             = findViewById(R.id.image_cloudWedge1);
+        cloudWedge2View             = findViewById(R.id.image_cloudWedge2);
+        cloudWedge3View             = findViewById(R.id.image_cloudWedge3);
+        cloudWedge4View             = findViewById(R.id.image_cloudWedge4);
+        cloudHalfLeftView           = findViewById(R.id.image_cloudHalf_left);
+        cloudHalfRightView          = findViewById(R.id.image_cloudHalf_right);
 
-        cityView            = (TextView) findViewById(R.id.text_city);
-        coordView           = (TextView) findViewById(R.id.text_coord);
+        windFlagView                = findViewById(R.id.image_windFlag);
+        windFlag1View               = findViewById(R.id.image_windFlag1);
+        windFlag2View               = findViewById(R.id.image_windFlag2);
+        windFlag3View               = findViewById(R.id.image_windFlag3);
+        windFlag4View               = findViewById(R.id.image_windFlag4);
+        windFlag5View               = findViewById(R.id.image_windFlag5);
+    }
 
-        temperatureView     = (TextView) findViewById(R.id.text_temperature);
-        humidityView        = (TextView) findViewById(R.id.text_humidity);
-        pressureView        = (TextView) findViewById(R.id.text_pressure);
-
-        precipitationView           = (TextView) findViewById(R.id.text_precipitation);
-
-        cloudLineVerticalView       = (ImageView) findViewById(R.id.image_cloudVertical);
-        cloudLineHorizontalView     = (ImageView) findViewById(R.id.image_cloudHorizontal);
-        cloudWedge1View             = (ImageView) findViewById(R.id.image_cloudWedge1);
-        cloudWedge2View             = (ImageView) findViewById(R.id.image_cloudWedge2);
-        cloudWedge3View             = (ImageView) findViewById(R.id.image_cloudWedge3);
-        cloudWedge4View             = (ImageView) findViewById(R.id.image_cloudWedge4);
-        cloudHalfLeftView           = (ImageView) findViewById(R.id.image_cloudHalf_left);
-        cloudHalfRightView          = (ImageView) findViewById(R.id.image_cloudHalf_right);
-
-        windFlagView                = (ImageView) findViewById(R.id.image_windFlag);
-        windFlag1View               = (ImageView) findViewById(R.id.image_windFlag1);
-        windFlag2View               = (ImageView) findViewById(R.id.image_windFlag2);
-        windFlag3View               = (ImageView) findViewById(R.id.image_windFlag3);
-        windFlag4View               = (ImageView) findViewById(R.id.image_windFlag4);
-        windFlag5View               = (ImageView) findViewById(R.id.image_windFlag5);
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -195,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
             try{
                 JSONArray weather = jsonResponse.getJSONArray("weather");
 
-                for(int i=0; i<=weather.length(); i++){
+                for(int i=weather.length(); i>=0; i--){
                     JSONObject condition = weather.getJSONObject(i);
 
                     int conditionId = condition.getInt("id");
@@ -206,13 +194,16 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else if(conditionId>=300 && conditionId<400){
                         // drizzle
-                        precipitationView.setText("\u002C");
+                        precipitationView.setText("\u275F");
                     }
                     else if(conditionId>=500 && conditionId<600){
                         // rain
                         precipitationView.setText("\u2022");
                         if(conditionId>=520){
                             precipitationView.setText("\u25BD"); //shower
+                        }
+                        if(conditionId==511){
+                            precipitationView.setText("\u223E"); //freezing rain
                         }
                     }
                     else if(conditionId>=600 && conditionId<700){
@@ -226,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                     else if(conditionId>=700 && conditionId<800){
                         // atmosphere
                         if(conditionId == 701 || conditionId == 741){
-                            precipitationView.setText("\u2262"); //fog
+                            precipitationView.setText("\u2261"); //fog
                         }
                         if(conditionId == 711){
                             //smoke
