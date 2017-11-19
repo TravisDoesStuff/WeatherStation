@@ -1,6 +1,11 @@
 package tnburt.weatherstation;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -8,7 +13,9 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +31,10 @@ public class MainActivity extends AppCompatActivity {
     static final String API_KEY = ""; //Insert API key here
     static final double hPa_TO_mmHg = 0.029529983071445;
     static final double ms_TO_knots = 1.943844;
+
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+
+    private FusedLocationProviderClient fusedLocationClient;
 
     int shortFlagPx;
     int longFlagPx;
@@ -57,6 +68,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        if(checkPermission()){
+            getLocation();
+        }
+        else{
+            requestPermission();
+        }
 
         cityView            = findViewById(R.id.text_city);
         coordView           = findViewById(R.id.text_coord);
@@ -95,6 +115,38 @@ public class MainActivity extends AppCompatActivity {
         longFlagPx = (int)Math.ceil(80 * logicalDensity);
 
         new FetchWeather().execute();
+    }
+
+    private void getLocation(){
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                        }
+                    }
+                });
+    }
+
+    private boolean checkPermission(){
+        return (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+    }
+
+    private void requestPermission(){
+        ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION }, REQUEST_PERMISSIONS_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        Log.i("Permission", " request");
+        if(requestCode == REQUEST_PERMISSIONS_REQUEST_CODE){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                getLocation();
+                new FetchWeather().execute();
+            }
+        }
     }
 
     private class FetchWeather extends AsyncTask<Void, Void, String>
@@ -183,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
             try{
                 JSONArray weather = jsonResponse.getJSONArray("weather");
 
-                for(int i=weather.length(); i>=0; i--){
+                for(int i=weather.length()-1; i>=0; i--){
                     JSONObject condition = weather.getJSONObject(i);
 
                     int conditionId = condition.getInt("id");
