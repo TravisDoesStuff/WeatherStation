@@ -6,7 +6,7 @@ Android application, displays weather station model based on what meteorologists
 * Utilize Google location services.
 * Complex drawables and transformations in layout.
 
-![Screenshot](/screenshot.png?raw=true "Screenshot")
+<img src="/screenshot.png" height="400">
 
 * Cloud Cover, %
 * Wind Speed and Direction
