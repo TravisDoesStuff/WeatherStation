@@ -195,6 +195,10 @@ public class MainActivity extends AppCompatActivity {
             try{
                 JSONObject jsonResponse = new JSONObject(response);
 
+                precipitationView.setText("");
+                resetClouds();
+                resetWinds();
+
                 updateCity(jsonResponse);
                 updateCoordinates(jsonResponse);
                 updateWeather(jsonResponse);
@@ -402,6 +406,31 @@ public class MainActivity extends AppCompatActivity {
             catch(JSONException e){
                 e.printStackTrace();
             }
+        }
+
+        private void resetClouds(){
+            cloudLineVerticalView.setAlpha((float)0);
+            cloudLineHorizontalView.setAlpha((float)0);
+            cloudWedge1View.setAlpha((float)0);
+            cloudWedge2View.setAlpha((float)0);
+            cloudWedge3View.setAlpha((float)0);
+            cloudWedge4View.setAlpha((float)0);
+            cloudHalfLeftView.setAlpha((float)0);
+            cloudHalfRightView.setAlpha((float)0);
+        }
+
+        private void resetWinds(){
+            windFlagView.setAlpha((float)0);
+            windFlag1View.setAlpha((float)0);
+            windFlag2View.setAlpha((float)0);
+            windFlag3View.setAlpha((float)0);
+            windFlag4View.setAlpha((float)0);
+            windFlag5View.setAlpha((float)0);
+
+            windFlag2View.getLayoutParams().width = shortFlagPx;
+            windFlag3View.getLayoutParams().width = shortFlagPx;
+            windFlag4View.getLayoutParams().width = shortFlagPx;
+            windFlag5View.getLayoutParams().width = shortFlagPx;
         }
     }
 }
