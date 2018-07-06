@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     static final String API_KEY = ""; //Insert API key here
     static final double hPa_TO_mmHg = 0.029529983071445;
     static final double ms_TO_knots = 1.943844;
+    static final int DAY_SEGMENT = 14400;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
@@ -114,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
         shortFlagPx = (int)Math.ceil(40 * logicalDensity);
         longFlagPx = (int)Math.ceil(80 * logicalDensity);
 
-        new FetchWeather().execute();
     }
 
     private void getLocation(){
@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         if (location != null) {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            new FetchWeather().execute();
                         }
                     }
                 });
@@ -144,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == REQUEST_PERMISSIONS_REQUEST_CODE){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 getLocation();
-                new FetchWeather().execute();
             }
         }
     }
@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
                 updateCity(jsonResponse);
                 updateCoordinates(jsonResponse);
+                updateSky(jsonResponse);
                 updateWeather(jsonResponse);
                 updateMain(jsonResponse);
                 updateClouds(jsonResponse);
@@ -313,6 +314,10 @@ public class MainActivity extends AppCompatActivity {
             catch(JSONException e){
                 e.printStackTrace();
             }
+        }
+
+        private void updateSky(JSONObject jsonResponse){
+
         }
 
         private void updateClouds(JSONObject jsonResponse){
