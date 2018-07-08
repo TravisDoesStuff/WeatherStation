@@ -2,6 +2,8 @@ package tnburt.weatherstation;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -10,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -317,7 +320,42 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void updateSky(JSONObject jsonResponse){
+            try{
+                JSONObject sys = jsonResponse.getJSONObject("sys");
 
+                int sunriseTime = sys.getInt("sunrise");
+                int sunsetTime = sys.getInt("sunset");
+                long currentTime = System.currentTimeMillis()/1000;
+
+                int topColor, bottomColor;
+                if(Math.abs(sunriseTime-currentTime) < (DAY_SEGMENT/2)){
+                    topColor = Color.parseColor("#BADCFF");
+                    bottomColor = Color.parseColor("#FFFB99");
+                }
+                else if(Math.abs(sunsetTime-currentTime) < (DAY_SEGMENT/2)){
+                    topColor = Color.parseColor("#7C5EB5");
+                    bottomColor = Color.parseColor("#FFC97F");
+                }
+                else if(currentTime<sunsetTime && currentTime>sunriseTime){
+                    topColor = Color.parseColor("#1E5799");
+                    bottomColor = Color.parseColor("#7DB9E8");
+                }
+                else{
+                    topColor = Color.parseColor("#000F21");
+                    bottomColor = Color.parseColor("#002051");
+                }
+
+                GradientDrawable skyGradient = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[] {bottomColor, topColor});
+                skyGradient.setShape(GradientDrawable.RECTANGLE);
+                skyGradient.setCornerRadius(0f);
+
+                View skyBackground = findViewById(R.id.mainlayout);
+                skyBackground.setBackground(skyGradient);
+
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+            }
         }
 
         private void updateClouds(JSONObject jsonResponse){
