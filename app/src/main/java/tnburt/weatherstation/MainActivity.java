@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     static final String API_KEY = ""; //Insert API key here
     static final double hPa_TO_mmHg = 0.029529983071445;
     static final double ms_TO_knots = 1.943844;
-    static final int DAY_SEGMENT = 14400;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
@@ -118,6 +117,18 @@ public class MainActivity extends AppCompatActivity {
         shortFlagPx = (int)Math.ceil(40 * logicalDensity);
         longFlagPx = (int)Math.ceil(80 * logicalDensity);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(checkPermission()){
+            getLocation();
+        }
+        else{
+            requestPermission();
+        }
     }
 
     private void getLocation(){
@@ -313,6 +324,10 @@ public class MainActivity extends AppCompatActivity {
                 temperatureView.setText(String.valueOf(temperature));
                 humidityView.setText(String.valueOf(humidity));
                 pressureView.setText(String.valueOf(barometer));
+
+                temperatureView.bringToFront();
+                humidityView.bringToFront();
+                pressureView.bringToFront();
             }
             catch(JSONException e){
                 e.printStackTrace();
@@ -328,17 +343,17 @@ public class MainActivity extends AppCompatActivity {
                 long currentTime = System.currentTimeMillis()/1000;
 
                 int topColor, bottomColor;
-                if(Math.abs(sunriseTime-currentTime) < (DAY_SEGMENT/2)){
-                    topColor = Color.parseColor("#BADCFF");
-                    bottomColor = Color.parseColor("#FFFB99");
+                if(Math.abs(sunriseTime-currentTime) < 3600){
+                    topColor = Color.parseColor("#AAC8FF");
+                    bottomColor = Color.parseColor("#CFFFAF");
                 }
-                else if(Math.abs(sunsetTime-currentTime) < (DAY_SEGMENT/2)){
+                else if(Math.abs(sunsetTime-currentTime) < 3600){
                     topColor = Color.parseColor("#7C5EB5");
                     bottomColor = Color.parseColor("#FFC97F");
                 }
                 else if(currentTime<sunsetTime && currentTime>sunriseTime){
-                    topColor = Color.parseColor("#1E5799");
-                    bottomColor = Color.parseColor("#7DB9E8");
+                    topColor = Color.parseColor("#074B99");
+                    bottomColor = Color.parseColor("#C5D8E5");
                 }
                 else{
                     topColor = Color.parseColor("#000F21");
