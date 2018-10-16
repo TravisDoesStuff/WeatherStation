@@ -344,8 +344,8 @@ public class MainActivity extends AppCompatActivity {
 
                 int topColor, bottomColor;
                 if(Math.abs(sunriseTime-currentTime) < 3600){
-                    topColor = Color.parseColor("#AAC8FF");
-                    bottomColor = Color.parseColor("#CFFFAF");
+                    topColor = Color.parseColor("#1673FF");
+                    bottomColor = Color.parseColor("#EDFF8C");
                 }
                 else if(Math.abs(sunsetTime-currentTime) < 3600){
                     topColor = Color.parseColor("#7C5EB5");
