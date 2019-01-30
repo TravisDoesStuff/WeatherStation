@@ -1,6 +1,7 @@
 package tnburt.weatherstation;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -160,6 +162,41 @@ public class MainActivity extends AppCompatActivity {
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 getLocation();
             }
+        }
+    }
+
+    public void weatherKey(View view) {
+        String definition = "";
+        switch (view.getTag().toString()) {
+            case "cloudCover":
+                definition = "Cloud Cover";
+                break;
+            case "temperature":
+                definition = "Temperature °F";
+                break;
+            case "humidity":
+                definition = "Relative Humidity";
+                break;
+            case "pressure":
+                definition = "Pressure inHg";
+                break;
+            case "precipitation":
+                definition = "Conditions";
+                break;
+            case "windDirection":
+                definition = "Wind Direction";
+                break;
+            case "windSpeed":
+                definition = "Wind Speed";
+                break;
+            default:
+                definition = "";
+                break;
+        }
+
+        if(!definition.equals("")) {
+            Context context = getApplicationContext();
+            Toast.makeText(context, definition, Toast.LENGTH_SHORT).show();
         }
     }
 
