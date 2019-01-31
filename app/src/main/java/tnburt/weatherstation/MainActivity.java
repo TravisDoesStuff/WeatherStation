@@ -30,12 +30,14 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
 
     static final String API_KEY = ""; //Insert API key here
     static final double hPa_TO_mmHg = 0.029529983071445;
     static final double ms_TO_knots = 1.943844;
+    static final double ms_TO_mph = 2.23694;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
@@ -68,6 +70,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView windFlag3View;
     private ImageView windFlag4View;
     private ImageView windFlag5View;
+
+    String def_cloudCover;
+    String def_temperature;
+    String def_humidity;
+    String def_pressure;
+    String def_windDirection;
+    String def_windSpeed;
+    String def_condition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,25 +179,22 @@ public class MainActivity extends AppCompatActivity {
         String definition = "";
         switch (view.getTag().toString()) {
             case "cloudCover":
-                definition = "Cloud Cover";
+                definition = "Cloud Cover: " + def_cloudCover + "%";
                 break;
             case "temperature":
-                definition = "Temperature °F";
+                definition = "Temperature: " + def_temperature + "°F";
                 break;
             case "humidity":
-                definition = "Relative Humidity";
+                definition = "Relative Humidity: " + def_humidity + "%";
                 break;
             case "pressure":
-                definition = "Pressure inHg";
+                definition = "Pressure: " + def_pressure + " in";
                 break;
             case "precipitation":
-                definition = "Conditions";
+                definition = "Conditions: " + def_condition;
                 break;
-            case "windDirection":
-                definition = "Wind Direction";
-                break;
-            case "windSpeed":
-                definition = "Wind Speed";
+            case "wind":
+                definition = "Winds " + def_windDirection + " at " + def_windSpeed + " mph";
                 break;
             default:
                 definition = "";
@@ -295,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject condition = weather.getJSONObject(i);
 
                     int conditionId = condition.getInt("id");
+                    def_condition = condition.getString("main");
 
                     if(conditionId>=200 && conditionId<300){
                         //thunderstorm
@@ -362,6 +370,12 @@ public class MainActivity extends AppCompatActivity {
                 humidityView.setText(String.valueOf(humidity));
                 pressureView.setText(String.valueOf(barometer));
 
+                DecimalFormat df = new DecimalFormat("##.##");
+
+                def_temperature = Integer.toString(temperature);
+                def_humidity = Integer.toString(humidity);
+                def_pressure = df.format(barometer);
+
                 temperatureView.bringToFront();
                 humidityView.bringToFront();
                 pressureView.bringToFront();
@@ -380,21 +394,21 @@ public class MainActivity extends AppCompatActivity {
                 long currentTime = System.currentTimeMillis()/1000;
 
                 int topColor, bottomColor;
-                if(Math.abs(sunriseTime-currentTime) < 3600){
-                    topColor = Color.parseColor("#1673FF");
-                    bottomColor = Color.parseColor("#EDFF8C");
+                if(Math.abs(sunriseTime-currentTime) < 3600){ // morning
+                    topColor = Color.parseColor("#6BCEFF");
+                    bottomColor = Color.parseColor("#FFFAB2");
                 }
-                else if(Math.abs(sunsetTime-currentTime) < 3600){
-                    topColor = Color.parseColor("#7C5EB5");
-                    bottomColor = Color.parseColor("#FFC97F");
+                else if(Math.abs(sunsetTime-currentTime) < 3600){ // evening
+                    topColor = Color.parseColor("#798EFF");
+                    bottomColor = Color.parseColor("#FFBB81");
                 }
-                else if(currentTime<sunsetTime && currentTime>sunriseTime){
-                    topColor = Color.parseColor("#074B99");
-                    bottomColor = Color.parseColor("#C5D8E5");
+                else if(currentTime<sunsetTime && currentTime>sunriseTime){ // day
+                    topColor = Color.parseColor("#2989FF");
+                    bottomColor = Color.parseColor("#C1E3FF");
                 }
-                else{
-                    topColor = Color.parseColor("#000F21");
-                    bottomColor = Color.parseColor("#002051");
+                else{ //night
+                    topColor = Color.parseColor("#001734");
+                    bottomColor = Color.parseColor("#001F3F");
                 }
 
                 GradientDrawable skyGradient = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[] {bottomColor, topColor});
@@ -414,6 +428,7 @@ public class MainActivity extends AppCompatActivity {
             try{
                 JSONObject clouds = jsonResponse.getJSONObject("clouds");
                 int cloudCover = clouds.getInt("all");
+                def_cloudCover = Integer.toString(cloudCover);
 
                 if(cloudCover >= 5 && cloudCover < 15){
                     cloudLineVerticalView.setAlpha((float)1);
@@ -459,6 +474,11 @@ public class MainActivity extends AppCompatActivity {
                 double windSpeed = wind.getDouble("speed") * ms_TO_knots;
                 int windDirection = wind.getInt("deg");
 
+                DecimalFormat df = new DecimalFormat("###");
+
+                def_windSpeed = df.format(wind.getDouble("speed") * ms_TO_mph);
+                def_windDirection = this.getCardinalDirections(windDirection);
+
                 if(windSpeed>0){
                     windFlagView.setAlpha((float)1);
                 }
@@ -501,6 +521,13 @@ public class MainActivity extends AppCompatActivity {
             catch(JSONException e){
                 e.printStackTrace();
             }
+        }
+
+        private String getCardinalDirections(int degrees) {
+            String cardinalDirections[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+            int heading = (int)Math.round((  ((double)degrees % 360) / 45)) % 8;
+
+            return cardinalDirections[heading];
         }
 
         private void resetClouds(){
